@@ -90,14 +90,21 @@ def token_required(f):
         token = request.headers.get("Authorization")
         
         if not token:
+            logging.warning("Token is missing")
             return jsonify({"error": "Token is missing"}), 401
+
+        # Extract the token from the "Bearer" prefix
+        token = token.split(" ")[1] if " " in token else token
 
         try:
             decoded_token = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
             request.username = decoded_token["username"]
+            logging.debug(f"Decoded token: {decoded_token}")
         except jwt.ExpiredSignatureError:
+            logging.warning("Token has expired")
             return jsonify({"error": "Token has expired"}), 401
-        except jwt.InvalidTokenError:
+        except jwt.InvalidTokenError as e:
+            logging.error(f"Invalid token: {e}")
             return jsonify({"error": "Invalid token"}), 401
 
         return f(*args, **kwargs)
