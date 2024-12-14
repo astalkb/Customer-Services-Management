@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_httpauth import HTTPBasicAuth
 import mysql.connector
+import json
 
 
 app = Flask(__name__)
@@ -53,3 +54,19 @@ def execute_query(query, params=None, fetch=False):
         if connection:
             connection.close()
         return None
+    
+
+def load_users():
+    """Load users from JSON file"""
+    try:
+        with open(USER_DATA_FILE, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+def save_users(users):
+    """Save users to JSON file"""
+    with open(USER_DATA_FILE, "w") as file:
+        json.dump(users, file)
+
+users = load_users()
