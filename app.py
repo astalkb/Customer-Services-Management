@@ -214,3 +214,29 @@ def add_address():
         return jsonify({"message": "Address added successfully"}), 201
     else:
         return jsonify({"error": "Failed to add address"}), 500
+    
+
+@app.route("/addresses/<int:address_id>", methods=["PUT"])
+@token_required
+@role_required(["staff", "admin"])
+def update_address(address_id):
+    data = request.get_json()
+    number_building = data.get("number_building")
+    street = data.get("street")
+    city = data.get("city")
+    zip_postcode = data.get("zip_postcode")
+    state_province_county = data.get("state_province_county")
+    country = data.get("country")
+
+    query = """
+    UPDATE Addresses SET number_building=%s, street=%s, city=%s, zip_postcode=%s, 
+    state_province_county=%s, country=%s WHERE address_id=%s
+    """
+    params = (number_building, street, city, zip_postcode, state_province_county, country, address_id)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Address updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update address"}), 500
