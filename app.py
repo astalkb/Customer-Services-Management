@@ -25,3 +25,31 @@ def get_db_connection():
     except mysql.connector.Error as e:
         print(f"Error connecting to MySQL Database: {e}")
         return None
+
+def execute_query(query, params=None, fetch=False):
+    """Execute a database query with optional parameters"""
+    connection = get_db_connection()
+    if not connection:
+        return None
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+        
+        if fetch:
+            result = cursor.fetchall()
+        else:
+            connection.commit()
+            result = cursor.rowcount
+        
+        cursor.close()
+        connection.close()
+        return result
+    except mysql.connector.Error as e:
+        print(f"Database error: {e}")
+        if connection:
+            connection.close()
+        return None
