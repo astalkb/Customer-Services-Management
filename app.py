@@ -5,6 +5,7 @@ import json
 import jwt
 from werkzeug.security import check_password_hash, generate_password_hash, check_password_hash
 from functools import wraps
+import datetime
 
 
 app = Flask(__name__)
@@ -134,3 +135,21 @@ def register():
     save_users(users)
 
     return jsonify({"message": "User registered successfully"}), 201
+
+# Login Route
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+
+    if username not in users or not check_password_hash(users[username]['password'], password):
+        return jsonify({"error": "Invalid credentials"}), 401
+
+    # Generate or retrieve existing token
+    token = jwt.encode({
+        "username": username,
+        "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
+    }, app.config["SECRET_KEY"], algorithm="HS256")
+
+    return jsonify({"token": token})
