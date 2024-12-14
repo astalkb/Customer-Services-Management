@@ -3,7 +3,7 @@ from flask_httpauth import HTTPBasicAuth
 import mysql.connector
 import json
 import jwt
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash, check_password_hash
 from functools import wraps
 
 
@@ -113,3 +113,24 @@ def role_required(required_roles):
             return f(*args, **kwargs)
         return wrapper
     return decorator
+
+# Register Route
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    role = data.get("role", "admin")
+
+    if username in users:
+        return jsonify({"error": "User already exists"}), 400
+
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+
+    # Hash the password and save the user
+    hashed_password = generate_password_hash(password)
+    users[username] = {"password": hashed_password, "role": role}
+    save_users(users)
+
+    return jsonify({"message": "User registered successfully"}), 201
