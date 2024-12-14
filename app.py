@@ -171,21 +171,29 @@ def login():
 
     return jsonify({"token": token})
 
-def format_response(data):
-    """Format the response data"""
-    if isinstance(data, list):
-        return {"items": data}
 
 # CRUD operations for Addresses
 @app.route("/addresses", methods=["GET"])
 def get_all_addresses():
-    query = "SELECT address_id, number_building, street, city, zip_postcode, state_province_county, country FROM Addresses"
+    query = "SELECT * FROM Addresses"
     addresses = execute_query(query, fetch=True)
     
     if not addresses:
         return jsonify({"error": "No addresses found"}), 404
     
-    return jsonify(format_response(addresses)), 200
+    formatted_addresses = [
+        {
+            "address_id": address["address_id"],
+            "number_building": address["number_building"],
+            "street": address["street"],
+            "city": address["city"],
+            "zip_postcode": address["zip_postcode"],
+            "state_province_county": address["state_province_county"],
+            "country": address["country"]
+        }
+        for address in addresses
+    ]
+    return jsonify(formatted_addresses), 200
 
 @app.route("/addresses", methods=["POST"])
 @token_required
