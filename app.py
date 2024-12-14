@@ -170,3 +170,19 @@ def login():
     logging.debug(f"Token payload: {token_payload}")
 
     return jsonify({"token": token})
+
+def format_response(data):
+    """Format the response data"""
+    if isinstance(data, list):
+        return {"items": data}
+
+# CRUD operations for Addresses
+@app.route("/addresses", methods=["GET"])
+def get_all_addresses():
+    query = "SELECT address_id, number_building, street, city, zip_postcode, state_province_county, country FROM Addresses"
+    addresses = execute_query(query, fetch=True)
+    
+    if not addresses:
+        return jsonify({"error": "No addresses found"}), 404
+    
+    return jsonify(format_response(addresses)), 200
