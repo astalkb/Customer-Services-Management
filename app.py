@@ -1,7 +1,10 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_httpauth import HTTPBasicAuth
 import mysql.connector
 import json
+import jwt
+from werkzeug.security import check_password_hash
+from functools import wraps
 
 
 app = Flask(__name__)
@@ -70,3 +73,43 @@ def save_users(users):
         json.dump(users, file)
 
 users = load_users()
+
+
+@auth.verify_password
+def verify_password(username, password):
+    """Verify user password"""
+    if username in users and check_password_hash(users[username]['password'], password):
+        return username
+
+def token_required(f):
+    """Decorator to require JWT token for route access"""
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        token = request.headers.get("Authorization")
+        
+        if not token:
+            return jsonify({"error": "Token is missing"}), 401
+
+        try:
+            decoded_token = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+            request.username = decoded_token["username"]
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token has expired"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Invalid token"}), 401
+
+        return f(*args, **kwargs)
+    return wrapper
+
+def role_required(required_roles):
+    """Decorator for role-based access control"""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            username = getattr(request, "username", None)
+            user_role = users.get(username, {}).get("role")
+            if not user_role or user_role not in required_roles:
+                return jsonify({"error": "Access forbidden: insufficient permissions"}), 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
