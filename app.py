@@ -6,6 +6,7 @@ import jwt
 from werkzeug.security import check_password_hash, generate_password_hash, check_password_hash
 from functools import wraps
 import datetime
+import logging
 
 
 app = Flask(__name__)
@@ -136,6 +137,9 @@ def register():
 
     return jsonify({"message": "User registered successfully"}), 201
 
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+
 # Login Route
 @app.route("/login", methods=["POST"])
 def login():
@@ -147,9 +151,15 @@ def login():
         return jsonify({"error": "Invalid credentials"}), 401
 
     # Generate or retrieve existing token
-    token = jwt.encode({
+    token_payload = {
         "username": username,
+        "role": users[username]['role'],
         "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
-    }, app.config["SECRET_KEY"], algorithm="HS256")
+    }
+    token = jwt.encode(token_payload, app.config["SECRET_KEY"], algorithm="HS256")
+
+    # Log the token and its payload
+    logging.debug(f"Generated token: {token}")
+    logging.debug(f"Token payload: {token_payload}")
 
     return jsonify({"token": token})
