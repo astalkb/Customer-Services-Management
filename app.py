@@ -240,3 +240,17 @@ def update_address(address_id):
         return jsonify({"message": "Address updated successfully"}), 200
     else:
         return jsonify({"error": "Failed to update address"}), 500
+
+@app.route("/addresses/<int:address_id>", methods=["DELETE"])
+@token_required
+@role_required(["staff", "admin"])
+def delete_address(address_id):
+    query = "DELETE FROM Addresses WHERE address_id=%s"
+    params = (address_id,)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Address deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete address"}), 500
