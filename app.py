@@ -193,7 +193,11 @@ def get_all_addresses():
         }
         for address in addresses
     ]
-    return jsonify(formatted_addresses), 200
+    return app.response_class(
+        response=json.dumps(formatted_addresses, separators=(', ', ': ')),
+        status=200,
+        mimetype='application/json'
+    )
 
 @app.route("/addresses", methods=["POST"])
 @token_required
