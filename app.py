@@ -186,3 +186,31 @@ def get_all_addresses():
         return jsonify({"error": "No addresses found"}), 404
     
     return jsonify(format_response(addresses)), 200
+
+@app.route("/addresses", methods=["POST"])
+@token_required
+@role_required(["staff", "admin"])
+def add_address():
+    data = request.get_json()
+    number_building = data.get("number_building")
+    street = data.get("street")
+    city = data.get("city")
+    zip_postcode = data.get("zip_postcode")
+    state_province_county = data.get("state_province_county")
+    country = data.get("country")
+
+    if not number_building or not street or not city or not zip_postcode or not state_province_county or not country:
+        return jsonify({"error": "Required fields missing"}), 400
+
+    query = """
+    INSERT INTO Addresses (number_building, street, city, zip_postcode, state_province_county, country) 
+    VALUES (%s, %s, %s, %s, %s, %s)
+    """
+    params = (number_building, street, city, zip_postcode, state_province_county, country)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Address added successfully"}), 201
+    else:
+        return jsonify({"error": "Failed to add address"}), 500
