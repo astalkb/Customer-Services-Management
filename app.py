@@ -492,3 +492,41 @@ def add_order():
         return jsonify({"message": "Order added successfully"}), 201
     else:
         return jsonify({"error": "Failed to add order"}), 500
+    
+@app.route("/orders/<int:order_id>", methods=["PUT"])
+@token_required
+@role_required(["staff", "admin"])
+def update_order(order_id):
+    data = request.get_json()
+    customer_id = data.get("customer_id")
+    order_status = data.get("order_status")
+    order_date = data.get("order_date")
+    start_date = data.get("start_date")
+    end_date = data.get("end_date")
+
+    query = """
+    UPDATE Customer_Orders SET customer_id=%s, order_status=%s, order_date=%s, 
+    start_date=%s, end_date=%s WHERE order_id=%s
+    """
+    params = (customer_id, order_status, order_date, start_date, end_date, order_id)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Order updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update order"}), 500
+
+@app.route("/orders/<int:order_id>", methods=["DELETE"])
+@token_required
+@role_required(["staff", "admin"])
+def delete_order(order_id):
+    query = "DELETE FROM Customer_Orders WHERE order_id=%s"
+    params = (order_id,)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Order deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete order"}), 500
