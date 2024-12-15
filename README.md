@@ -153,3 +153,12 @@ customer_services/
 
 -   **Missing Dependencies:**\
     If any required package is missing, run `pip install -r requirements.txt` again.
+
+## Git Commit Guidelines
+Use conventional commits:
+```bash
+feat: add user authentication
+fix: resolve database connection issue
+docs: update API documentation
+test: add user registration tests
+```
