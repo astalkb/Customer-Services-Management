@@ -223,12 +223,16 @@ def add_address():
     """
     params = (number_building, street, city, zip_postcode, state_province_county, country)
 
-    result = execute_query(query, params)
+    try:
+        result = execute_query(query, params)
 
-    if result:
-        return jsonify({"message": "Address added successfully"}), 201
-    else:
-        return jsonify({"error": "Failed to add address"}), 500
+        if result is not None and result >= 0:
+            return jsonify({"message": "Address added successfully"}), 201
+        else:
+            return jsonify({"error": "Failed to add address"}), 500
+    except Exception as e:
+        logging.error(f"Error adding address: {e}")
+        return jsonify({"error": "An error occurred while adding address"}), 500
     
 
 @app.route("/addresses/<int:address_id>", methods=["PUT"])
@@ -316,12 +320,16 @@ def add_customer():
     """
     params = (address_id, customer_name, customer_phone, customer_email)
     
-    result = execute_query(query, params)
-    
-    if result:
-        return jsonify({"message": "Customer added successfully"}), 201
-    else:
-        return jsonify({"error": "Failed to add customer"}), 500
+    try:
+        result = execute_query(query, params)
+        
+        if result is not None and result >= 0:
+            return jsonify({"message": "Customer added successfully"}), 201
+        else:
+            return jsonify({"error": "Failed to add customer"}), 500
+    except Exception as e:
+        logging.error(f"Error adding customer: {e}")
+        return jsonify({"error": "An error occurred while adding customer"}), 500
 
 @app.route("/customers/<int:customer_id>", methods=["PUT"])
 @token_required
@@ -401,12 +409,16 @@ def add_service():
     """
     params = (service_name, price_per_period)
     
-    result = execute_query(query, params)
-    
-    if result:
-        return jsonify({"message": "Service added successfully"}), 201
-    else:
-        return jsonify({"error": "Failed to add service"}), 500
+    try:
+        result = execute_query(query, params)
+        
+        if result is not None and result >= 0:
+            return jsonify({"message": "Service added successfully"}), 201
+        else:
+            return jsonify({"error": "Failed to add service"}), 500
+    except Exception as e:
+        logging.error(f"Error adding service: {e}")
+        return jsonify({"error": "An error occurred while adding service"}), 500
 
 @app.route("/services/<int:service_id>", methods=["PUT"])
 @token_required
@@ -489,12 +501,16 @@ def add_order():
     """
     params = (customer_id, order_status, order_date, start_date, end_date)
     
-    result = execute_query(query, params)
-    
-    if result:
-        return jsonify({"message": "Order added successfully"}), 201
-    else:
-        return jsonify({"error": "Failed to add order"}), 500
+    try:
+        result = execute_query(query, params)
+        
+        if result is not None and result >= 0:
+            return jsonify({"message": "Order added successfully"}), 201
+        else:
+            return jsonify({"error": "Failed to add order"}), 500
+    except Exception as e:
+        logging.error(f"Error adding order: {e}")
+        return jsonify({"error": "An error occurred while adding order"}), 500
     
 @app.route("/orders/<int:order_id>", methods=["PUT"])
 @token_required
@@ -581,12 +597,16 @@ def add_order_item():
     """
     params = (order_id, service_id, order_quantity, monthly_payment_amount, monthly_payment_date)
     
-    result = execute_query(query, params)
-    
-    if result:
-        return jsonify({"message": "Order item added successfully"}), 201
-    else:
-        return jsonify({"error": "Failed to add order item"}), 500
+    try:
+        result = execute_query(query, params)
+        
+        if result is not None and result >= 0:
+            return jsonify({"message": "Order item added successfully"}), 201
+        else:
+            return jsonify({"error": "Failed to add order item"}), 500
+    except Exception as e:
+        logging.error(f"Error adding order item: {e}")
+        return jsonify({"error": "An error occurred while adding order item"}), 500
 
 @app.route("/order_items/<int:order_item_id>", methods=["PUT"])
 @token_required
@@ -673,12 +693,16 @@ def add_payment():
     """
     params = (order_id, payment_date, payment_amount, payment_method, transaction_reference)
     
-    result = execute_query(query, params)
-    
-    if result:
-        return jsonify({"message": "Payment added successfully"}), 201
-    else:
-        return jsonify({"error": "Failed to add payment"}), 500
+    try:
+        result = execute_query(query, params)
+        
+        if result is not None and result >= 0:
+            return jsonify({"message": "Payment added successfully"}), 201
+        else:
+            return jsonify({"error": "Failed to add payment"}), 500
+    except Exception as e:
+        logging.error(f"Error adding payment: {e}")
+        return jsonify({"error": "An error occurred while adding payment"}), 500
 
 @app.route("/payments/<int:payment_id>", methods=["PUT"])
 @token_required
