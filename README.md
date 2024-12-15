@@ -40,17 +40,21 @@ Install the required dependencies by running the following command:
 pip install -r requirements.txt
 ```
 
-### 3. Configure Database Connection
+### 3. Configuration
 
-Modify the database connection settings in the `app.py` file. Look for the `DB_CONFIG` dictionary and update the values with your actual database credentials:
-```python
-DB_CONFIG = {
-'host': 'localhost',
-'user': 'your_username',
-'password': 'your_password',
-'database': 'elective'
-}
-```
+1. **Upload the Database Schema:**
+   Upload the `elective.sql` file from the `database` folder to your MySQL server or local machine.
+
+2. **Modify the Database Connection Settings:**
+   After uploading the database schema, modify the database connection settings in the `app.py` file. Look for the `DB_CONFIG` dictionary and update the values with your actual database credentials:
+   ```python
+   DB_CONFIG = {
+       'host': 'localhost',
+       'user': 'your_username',
+       'password': 'your_password',
+       'database': 'elective'
+   }
+   ```
 
 ### 4. Run the Application
 
