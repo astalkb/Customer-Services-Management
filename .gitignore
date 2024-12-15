@@ -1,2 +1,4 @@
 users.json
 faker_generator.py
+__pycache__/
+.pytest_cache/
