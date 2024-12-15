@@ -96,55 +96,55 @@ customer_services/
 
 | **Method** | **Endpoint** | **Description** | **Roles Required** |
 | --- | --- | --- | --- |
-| GET | /addresses | Fetch all addresses. | `admin`, `staff` |
+| GET | /addresses | Fetch all addresses. | - |
 | POST | /addresses | Add a new address to the database. | `admin`, `staff` |
 | PUT | /addresses/<int:address_id> | Update details of a specific address by ID. | `admin`, `staff` |
-| DELETE | /addresses/<int:address_id> | Delete an address by ID. | `admin` |
+| DELETE | /addresses/<int:address_id> | Delete an address by ID. | `admin`, `staff` |
 
 ### Customer CRUD Endpoints
 
 | **Method** | **Endpoint** | **Description** | **Roles Required** |
 | --- | --- | --- | --- |
-| GET | /customers | Fetch all customers. | `admin`, `staff` |
+| GET | /customers | Fetch all customers. | - |
 | POST | /customers | Add a new customer to the database. | `admin`, `staff` |
 | PUT | /customers/<int:customer_id> | Update details of a specific customer by ID. | `admin`, `staff` |
-| DELETE | /customers/<int:customer_id> | Delete a customer by ID. | `admin` |
+| DELETE | /customers/<int:customer_id> | Delete a customer by ID. | `admin`, `staff` |
 
 ### Service CRUD Endpoints
 
 | **Method** | **Endpoint** | **Description** | **Roles Required** |
 | --- | --- | --- | --- |
-| GET | /services | Fetch all services. | `admin`, `staff` |
+| GET | /services | Fetch all services. | - |
 | POST | /services | Add a new service to the database. | `admin`, `staff` |
 | PUT | /services/<int:service_id> | Update details of a specific service by ID. | `admin`, `staff` |
-| DELETE | /services/<int:service_id> | Delete a service by ID. | `admin` |
+| DELETE | /services/<int:service_id> | Delete a service by ID. | `admin`, `staff` |
 
 ### Order CRUD Endpoints
 
 | **Method** | **Endpoint** | **Description** | **Roles Required** |
 | --- | --- | --- | --- |
-| GET | /orders | Fetch all orders. | `admin`, `staff` |
+| GET | /orders | Fetch all orders. | - |
 | POST | /orders | Add a new order to the database. | `admin`, `staff` |
 | PUT | /orders/<int:order_id> | Update details of a specific order by ID. | `admin`, `staff` |
-| DELETE | /orders/<int:order_id> | Delete an order by ID. | `admin` |
+| DELETE | /orders/<int:order_id> | Delete an order by ID. | `admin`, `staff` |
 
 ### Order Item CRUD Endpoints
 
 | **Method** | **Endpoint** | **Description** | **Roles Required** |
 | --- | --- | --- | --- |
-| GET | /order_items | Fetch all order items. | `admin`, `staff` |
+| GET | /order_items | Fetch all order items. | - |
 | POST | /order_items | Add a new order item to the database. | `admin`, `staff` |
 | PUT | /order_items/<int:order_item_id> | Update details of a specific order item by ID. | `admin`, `staff` |
-| DELETE | /order_items/<int:order_item_id> | Delete an order item by ID. | `admin` |
+| DELETE | /order_items/<int:order_item_id> | Delete an order item by ID. | `admin`, `staff` |
 
 ### Payment CRUD Endpoints
 
 | **Method** | **Endpoint** | **Description** | **Roles Required** |
 | --- | --- | --- | --- |
-| GET | /payments | Fetch all payments. | `admin`, `staff` |
+| GET | /payments | Fetch all payments. | - |
 | POST | /payments | Add a new payment to the database. | `admin`, `staff` |
 | PUT | /payments/<int:payment_id> | Update details of a specific payment by ID. | `admin`, `staff` |
-| DELETE | /payments/<int:payment_id> | Delete a payment by ID. | `admin` |
+| DELETE | /payments/<int:payment_id> | Delete a payment by ID. | `admin`, `staff` |
 
 ## Troubleshooting
 
