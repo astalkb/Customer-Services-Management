@@ -744,7 +744,90 @@ def delete_payment(payment_id):
 
 @app.route("/")
 def hello_world():
-    return "Customer & Services Management System"
+    return """
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer & Services Management System</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border: 1px solid #333;
+        }
+        h1 {
+            color: #4da6ff;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #4da6ff;
+            margin-top: 25px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #2c2c2c;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #404040;
+        }
+        li a {
+            display: block;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        li a:hover {
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Customer & Services Management System</h1>
+        
+        <h2>Available Tables</h2>
+        <ul>
+            <li><a href="/addresses">Addresses</a></li>
+            <li><a href="/customers">Customers</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/orders">Orders</a></li>
+            <li><a href="/order_items">Order Items</a></li>
+            <li><a href="/payments">Payments</a></li>
+        </ul>
+        
+        <div class="footer">
+            © 2024 Customer Management API
+        </div>
+    </div>
+</body>
+</html>
+    """
 
 if __name__ == "__main__":
     app.run(debug=True)
