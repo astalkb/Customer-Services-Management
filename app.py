@@ -356,3 +356,85 @@ def delete_customer(customer_id):
         return jsonify({"message": "Customer deleted successfully"}), 200
     else:
         return jsonify({"error": "Failed to delete customer"}), 500
+    
+
+# CRUD operations for Services
+@app.route("/services", methods=["GET"])
+def get_all_services():
+    query = "SELECT * FROM Services"
+    services = execute_query(query, fetch=True)
+    
+    if not services:
+        return jsonify({"error": "No services found"}), 404
+    
+    formatted_services = [
+        {
+            "service_id": service["service_id"],
+            "service_name": service["service_name"],
+            "price_per_period": float(service["price_per_period"])
+        }
+        for service in services
+    ]
+    return app.response_class(
+        response=json.dumps(formatted_services, separators=(', ', ': ')),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route("/services", methods=["POST"])
+@token_required
+@role_required(["staff", "admin"])
+def add_service():
+    data = request.get_json()
+    service_name = data.get("service_name")
+    price_per_period = data.get("price_per_period")
+
+    if not service_name or price_per_period is None:
+        return jsonify({"error": "Required fields missing"}), 400
+
+    query = """
+    INSERT INTO Services (service_name, price_per_period) 
+    VALUES (%s, %s)
+    """
+    params = (service_name, price_per_period)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Service added successfully"}), 201
+    else:
+        return jsonify({"error": "Failed to add service"}), 500
+
+@app.route("/services/<int:service_id>", methods=["PUT"])
+@token_required
+@role_required(["staff", "admin"])
+def update_service(service_id):
+    data = request.get_json()
+    service_name = data.get("service_name")
+    price_per_period = data.get("price_per_period")
+
+    query = """
+    UPDATE Services SET service_name=%s, price_per_period=%s WHERE service_id=%s
+    """
+    params = (service_name, price_per_period, service_id)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Service updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update service"}), 500
+
+@app.route("/services/<int:service_id>", methods=["DELETE"])
+@token_required
+@role_required(["staff", "admin"])
+def delete_service(service_id):
+    query = "DELETE FROM Services WHERE service_id=%s"
+    params = (service_id,)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Service deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete service"}), 500
