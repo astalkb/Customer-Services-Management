@@ -178,7 +178,7 @@ def login():
 # CRUD operations for Addresses
 @app.route("/addresses", methods=["GET"])
 def get_all_addresses():
-    query = "SELECT * FROM Addresses"
+    query = "SELECT * FROM addresses"
     addresses = execute_query(query, fetch=True)
     
     if not addresses:
@@ -218,7 +218,7 @@ def add_address():
         return jsonify({"error": "Required fields missing"}), 400
 
     query = """
-    INSERT INTO Addresses (number_building, street, city, zip_postcode, state_province_county, country) 
+    INSERT INTO addresses (number_building, street, city, zip_postcode, state_province_county, country) 
     VALUES (%s, %s, %s, %s, %s, %s)
     """
     params = (number_building, street, city, zip_postcode, state_province_county, country)
@@ -248,7 +248,7 @@ def update_address(address_id):
     country = data.get("country")
 
     query = """
-    UPDATE Addresses SET number_building=%s, street=%s, city=%s, zip_postcode=%s, 
+    UPDATE addresses SET number_building=%s, street=%s, city=%s, zip_postcode=%s, 
     state_province_county=%s, country=%s WHERE address_id=%s
     """
     params = (number_building, street, city, zip_postcode, state_province_county, country, address_id)
@@ -264,7 +264,7 @@ def update_address(address_id):
 @token_required
 @role_required(["staff", "admin"])
 def delete_address(address_id):
-    query = "DELETE FROM Addresses WHERE address_id=%s"
+    query = "DELETE FROM addresses WHERE address_id=%s"
     params = (address_id,)
     
     result = execute_query(query, params)
@@ -278,7 +278,7 @@ def delete_address(address_id):
 # CRUD operations for Customers
 @app.route("/customers", methods=["GET"])
 def get_all_customers():
-    query = "SELECT * FROM Customers"
+    query = "SELECT * FROM customers"
     customers = execute_query(query, fetch=True)
     
     if not customers:
@@ -315,7 +315,7 @@ def add_customer():
         return jsonify({"error": "Required fields missing"}), 400
 
     query = """
-    INSERT INTO Customers (address_id, customer_name, customer_phone, customer_email) 
+    INSERT INTO customers (address_id, customer_name, customer_phone, customer_email) 
     VALUES (%s, %s, %s, %s)
     """
     params = (address_id, customer_name, customer_phone, customer_email)
@@ -342,7 +342,7 @@ def update_customer(customer_id):
     customer_email = data.get("customer_email")
 
     query = """
-    UPDATE Customers SET address_id=%s, customer_name=%s, customer_phone=%s, 
+    UPDATE customers SET address_id=%s, customer_name=%s, customer_phone=%s, 
     customer_email=%s WHERE customer_id=%s
     """
     params = (address_id, customer_name, customer_phone, customer_email, customer_id)
@@ -358,7 +358,7 @@ def update_customer(customer_id):
 @token_required
 @role_required(["staff", "admin"])
 def delete_customer(customer_id):
-    query = "DELETE FROM Customers WHERE customer_id=%s"
+    query = "DELETE FROM customers WHERE customer_id=%s"
     params = (customer_id,)
     
     result = execute_query(query, params)
@@ -372,7 +372,7 @@ def delete_customer(customer_id):
 # CRUD operations for Services
 @app.route("/services", methods=["GET"])
 def get_all_services():
-    query = "SELECT * FROM Services"
+    query = "SELECT * FROM services"
     services = execute_query(query, fetch=True)
     
     if not services:
@@ -404,7 +404,7 @@ def add_service():
         return jsonify({"error": "Required fields missing"}), 400
 
     query = """
-    INSERT INTO Services (service_name, price_per_period) 
+    INSERT INTO services (service_name, price_per_period) 
     VALUES (%s, %s)
     """
     params = (service_name, price_per_period)
@@ -429,7 +429,7 @@ def update_service(service_id):
     price_per_period = data.get("price_per_period")
 
     query = """
-    UPDATE Services SET service_name=%s, price_per_period=%s WHERE service_id=%s
+    UPDATE services SET service_name=%s, price_per_period=%s WHERE service_id=%s
     """
     params = (service_name, price_per_period, service_id)
     
@@ -444,7 +444,7 @@ def update_service(service_id):
 @token_required
 @role_required(["staff", "admin"])
 def delete_service(service_id):
-    query = "DELETE FROM Services WHERE service_id=%s"
+    query = "DELETE FROM services WHERE service_id=%s"
     params = (service_id,)
     
     result = execute_query(query, params)
@@ -458,7 +458,7 @@ def delete_service(service_id):
 # CRUD operations for Customer_Orders
 @app.route("/orders", methods=["GET"])
 def get_all_orders():
-    query = "SELECT * FROM Customer_Orders"
+    query = "SELECT * FROM customer_orders"
     orders = execute_query(query, fetch=True)
     
     if not orders:
@@ -496,7 +496,7 @@ def add_order():
         return jsonify({"error": "Required fields missing"}), 400
 
     query = """
-    INSERT INTO Customer_Orders (customer_id, order_status, order_date, start_date, end_date) 
+    INSERT INTO customer_orders (customer_id, order_status, order_date, start_date, end_date) 
     VALUES (%s, %s, %s, %s, %s)
     """
     params = (customer_id, order_status, order_date, start_date, end_date)
@@ -524,7 +524,7 @@ def update_order(order_id):
     end_date = data.get("end_date")
 
     query = """
-    UPDATE Customer_Orders SET customer_id=%s, order_status=%s, order_date=%s, 
+    UPDATE customer_orders SET customer_id=%s, order_status=%s, order_date=%s, 
     start_date=%s, end_date=%s WHERE order_id=%s
     """
     params = (customer_id, order_status, order_date, start_date, end_date, order_id)
@@ -540,7 +540,7 @@ def update_order(order_id):
 @token_required
 @role_required(["staff", "admin"])
 def delete_order(order_id):
-    query = "DELETE FROM Customer_Orders WHERE order_id=%s"
+    query = "DELETE FROM customer_orders WHERE order_id=%s"
     params = (order_id,)
     
     result = execute_query(query, params)
@@ -554,7 +554,7 @@ def delete_order(order_id):
 # CRUD operations for Order_Items
 @app.route("/order_items", methods=["GET"])
 def get_all_order_items():
-    query = "SELECT * FROM Order_Items"
+    query = "SELECT * FROM order_items"
     order_items = execute_query(query, fetch=True)
     
     if not order_items:
@@ -592,7 +592,7 @@ def add_order_item():
         return jsonify({"error": "Required fields missing"}), 400
 
     query = """
-    INSERT INTO Order_Items (order_id, service_id, order_quantity, monthly_payment_amount, monthly_payment_date) 
+    INSERT INTO order_items (order_id, service_id, order_quantity, monthly_payment_amount, monthly_payment_date) 
     VALUES (%s, %s, %s, %s, %s)
     """
     params = (order_id, service_id, order_quantity, monthly_payment_amount, monthly_payment_date)
@@ -620,7 +620,7 @@ def update_order_item(order_item_id):
     monthly_payment_date = data.get("monthly_payment_date")
 
     query = """
-    UPDATE Order_Items SET order_id=%s, service_id=%s, order_quantity=%s, 
+    UPDATE order_items SET order_id=%s, service_id=%s, order_quantity=%s, 
     monthly_payment_amount=%s, monthly_payment_date=%s WHERE order_item_id=%s
     """
     params = (order_id, service_id, order_quantity, monthly_payment_amount, monthly_payment_date, order_item_id)
@@ -636,7 +636,7 @@ def update_order_item(order_item_id):
 @token_required
 @role_required(["staff", "admin"])
 def delete_order_item(order_item_id):
-    query = "DELETE FROM Order_Items WHERE order_item_id=%s"
+    query = "DELETE FROM order_items WHERE order_item_id=%s"
     params = (order_item_id,)
     
     result = execute_query(query, params)
@@ -650,7 +650,7 @@ def delete_order_item(order_item_id):
 # CRUD operations for Customer_Payment_Details
 @app.route("/payments", methods=["GET"])
 def get_all_payments():
-    query = "SELECT * FROM Customer_Payment_Details"
+    query = "SELECT * FROM customer_payment_details"
     payments = execute_query(query, fetch=True)
     
     if not payments:
@@ -688,7 +688,7 @@ def add_payment():
         return jsonify({"error": "Required fields missing"}), 400
 
     query = """
-    INSERT INTO Customer_Payment_Details (order_id, payment_date, payment_amount, payment_method, transaction_reference) 
+    INSERT INTO customer_payment_details (order_id, payment_date, payment_amount, payment_method, transaction_reference) 
     VALUES (%s, %s, %s, %s, %s)
     """
     params = (order_id, payment_date, payment_amount, payment_method, transaction_reference)
@@ -716,7 +716,7 @@ def update_payment(payment_id):
     transaction_reference = data.get("transaction_reference")
 
     query = """
-    UPDATE Customer_Payment_Details SET order_id=%s, payment_date=%s, payment_amount=%s, 
+    UPDATE customer_payment_details SET order_id=%s, payment_date=%s, payment_amount=%s, 
     payment_method=%s, transaction_reference=%s WHERE payment_id=%s
     """
     params = (order_id, payment_date, payment_amount, payment_method, transaction_reference, payment_id)
@@ -732,7 +732,7 @@ def update_payment(payment_id):
 @token_required
 @role_required(["staff", "admin"])
 def delete_payment(payment_id):
-    query = "DELETE FROM Customer_Payment_Details WHERE payment_id=%s"
+    query = "DELETE FROM customer_payment_details WHERE payment_id=%s"
     params = (payment_id,)
     
     result = execute_query(query, params)
