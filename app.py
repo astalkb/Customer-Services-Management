@@ -266,3 +266,93 @@ def delete_address(address_id):
         return jsonify({"message": "Address deleted successfully"}), 200
     else:
         return jsonify({"error": "Failed to delete address"}), 500
+    
+
+# CRUD operations for Customers
+@app.route("/customers", methods=["GET"])
+def get_all_customers():
+    query = "SELECT * FROM Customers"
+    customers = execute_query(query, fetch=True)
+    
+    if not customers:
+        return jsonify({"error": "No customers found"}), 404
+    
+    formatted_customers = [
+        {
+            "customer_id": customer["customer_id"],
+            "address_id": customer["address_id"],
+            "customer_name": customer["customer_name"],
+            "customer_phone": customer["customer_phone"],
+            "customer_email": customer["customer_email"]
+        }
+        for customer in customers
+    ]
+    return app.response_class(
+        response=json.dumps(formatted_customers, separators=(', ', ': ')),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route("/customers", methods=["POST"])
+@token_required
+@role_required(["staff", "admin"])
+def add_customer():
+    data = request.get_json()
+    address_id = data.get("address_id")
+    customer_name = data.get("customer_name")
+    customer_phone = data.get("customer_phone")
+    customer_email = data.get("customer_email")
+
+    # Validation
+    if not address_id or not customer_name or not customer_phone:
+        return jsonify({"error": "Required fields missing"}), 400
+
+    query = """
+    INSERT INTO Customers (address_id, customer_name, customer_phone, customer_email) 
+    VALUES (%s, %s, %s, %s)
+    """
+    params = (address_id, customer_name, customer_phone, customer_email)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Customer added successfully"}), 201
+    else:
+        return jsonify({"error": "Failed to add customer"}), 500
+
+@app.route("/customers/<int:customer_id>", methods=["PUT"])
+@token_required
+@role_required(["staff", "admin"])
+def update_customer(customer_id):
+    data = request.get_json()
+    address_id = data.get("address_id")
+    customer_name = data.get("customer_name")
+    customer_phone = data.get("customer_phone")
+    customer_email = data.get("customer_email")
+
+    query = """
+    UPDATE Customers SET address_id=%s, customer_name=%s, customer_phone=%s, 
+    customer_email=%s WHERE customer_id=%s
+    """
+    params = (address_id, customer_name, customer_phone, customer_email, customer_id)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Customer updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update customer"}), 500
+
+@app.route("/customers/<int:customer_id>", methods=["DELETE"])
+@token_required
+@role_required(["staff", "admin"])
+def delete_customer(customer_id):
+    query = "DELETE FROM Customers WHERE customer_id=%s"
+    params = (customer_id,)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Customer deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete customer"}), 500
