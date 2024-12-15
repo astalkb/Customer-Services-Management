@@ -438,3 +438,57 @@ def delete_service(service_id):
         return jsonify({"message": "Service deleted successfully"}), 200
     else:
         return jsonify({"error": "Failed to delete service"}), 500
+
+
+# CRUD operations for Customer_Orders
+@app.route("/orders", methods=["GET"])
+def get_all_orders():
+    query = "SELECT * FROM Customer_Orders"
+    orders = execute_query(query, fetch=True)
+    
+    if not orders:
+        return jsonify({"error": "No orders found"}), 404
+    
+    formatted_orders = [
+        {
+            "order_id": order["order_id"],
+            "customer_id": order["customer_id"],
+            "order_status": order["order_status"],
+            "order_date": order["order_date"].isoformat() if isinstance(order["order_date"], datetime.date) else str(order["order_date"]),
+            "start_date": order["start_date"].isoformat() if isinstance(order["start_date"], datetime.date) else str(order["start_date"]),
+            "end_date": order["end_date"].isoformat() if isinstance(order["end_date"], datetime.date) else str(order["end_date"])
+        }
+        for order in orders
+    ]
+    return app.response_class(
+        response=json.dumps(formatted_orders, separators=(', ', ': ')),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route("/orders", methods=["POST"])
+@token_required
+@role_required(["staff", "admin"])
+def add_order():
+    data = request.get_json()
+    customer_id = data.get("customer_id")
+    order_status = data.get("order_status")
+    order_date = data.get("order_date")
+    start_date = data.get("start_date")
+    end_date = data.get("end_date")
+
+    if not customer_id or not order_status or not order_date or not start_date:
+        return jsonify({"error": "Required fields missing"}), 400
+
+    query = """
+    INSERT INTO Customer_Orders (customer_id, order_status, order_date, start_date, end_date) 
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    params = (customer_id, order_status, order_date, start_date, end_date)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Order added successfully"}), 201
+    else:
+        return jsonify({"error": "Failed to add order"}), 500
