@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash, check
 from functools import wraps
 import datetime
 import logging
+from decimal import Decimal
 
 
 app = Flask(__name__)
