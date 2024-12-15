@@ -622,3 +622,102 @@ def delete_order_item(order_item_id):
         return jsonify({"message": "Order item deleted successfully"}), 200
     else:
         return jsonify({"error": "Failed to delete order item"}), 500
+
+
+# CRUD operations for Customer_Payment_Details
+@app.route("/payments", methods=["GET"])
+def get_all_payments():
+    query = "SELECT * FROM Customer_Payment_Details"
+    payments = execute_query(query, fetch=True)
+    
+    if not payments:
+        return jsonify({"error": "No payments found"}), 404
+    
+    formatted_payments = [
+        {
+            "payment_id": payment["payment_id"],
+            "order_id": payment["order_id"],
+            "payment_date": payment["payment_date"].isoformat() if isinstance(payment["payment_date"], datetime.date) else str(payment["payment_date"]),
+            "payment_amount": float(payment["payment_amount"]) if isinstance(payment["payment_amount"], Decimal) else payment["payment_amount"],
+            "payment_method": payment["payment_method"],
+            "transaction_reference": payment["transaction_reference"]
+        }
+        for payment in payments
+    ]
+    return app.response_class(
+        response=json.dumps(formatted_payments, separators=(', ', ': ')),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route("/payments", methods=["POST"])
+@token_required
+@role_required(["staff", "admin"])
+def add_payment():
+    data = request.get_json()
+    order_id = data.get("order_id")
+    payment_date = data.get("payment_date")
+    payment_amount = data.get("payment_amount")
+    payment_method = data.get("payment_method")
+    transaction_reference = data.get("transaction_reference")
+
+    if not order_id or not payment_date or payment_amount is None or not payment_method:
+        return jsonify({"error": "Required fields missing"}), 400
+
+    query = """
+    INSERT INTO Customer_Payment_Details (order_id, payment_date, payment_amount, payment_method, transaction_reference) 
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    params = (order_id, payment_date, payment_amount, payment_method, transaction_reference)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Payment added successfully"}), 201
+    else:
+        return jsonify({"error": "Failed to add payment"}), 500
+
+@app.route("/payments/<int:payment_id>", methods=["PUT"])
+@token_required
+@role_required(["staff", "admin"])
+def update_payment(payment_id):
+    data = request.get_json()
+    order_id = data.get("order_id")
+    payment_date = data.get("payment_date")
+    payment_amount = data.get("payment_amount")
+    payment_method = data.get("payment_method")
+    transaction_reference = data.get("transaction_reference")
+
+    query = """
+    UPDATE Customer_Payment_Details SET order_id=%s, payment_date=%s, payment_amount=%s, 
+    payment_method=%s, transaction_reference=%s WHERE payment_id=%s
+    """
+    params = (order_id, payment_date, payment_amount, payment_method, transaction_reference, payment_id)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Payment updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update payment"}), 500
+
+@app.route("/payments/<int:payment_id>", methods=["DELETE"])
+@token_required
+@role_required(["staff", "admin"])
+def delete_payment(payment_id):
+    query = "DELETE FROM Customer_Payment_Details WHERE payment_id=%s"
+    params = (payment_id,)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Payment deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete payment"}), 500
+
+@app.route("/")
+def hello_world():
+    return "Customer & Services Management System"
+
+if __name__ == "__main__":
+    app.run(debug=True)
