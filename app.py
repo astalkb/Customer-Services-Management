@@ -530,3 +530,95 @@ def delete_order(order_id):
         return jsonify({"message": "Order deleted successfully"}), 200
     else:
         return jsonify({"error": "Failed to delete order"}), 500
+
+
+# CRUD operations for Order_Items
+@app.route("/order_items", methods=["GET"])
+def get_all_order_items():
+    query = "SELECT * FROM Order_Items"
+    order_items = execute_query(query, fetch=True)
+    
+    if not order_items:
+        return jsonify({"error": "No order items found"}), 404
+    
+    formatted_order_items = [
+        {
+            "order_item_id": item["order_item_id"],
+            "order_id": item["order_id"],
+            "service_id": item["service_id"],
+            "order_quantity": item["order_quantity"],
+            "monthly_payment_amount": float(item["monthly_payment_amount"]) if isinstance(item["monthly_payment_amount"], Decimal) else item["monthly_payment_amount"],
+            "monthly_payment_date": item["monthly_payment_date"].isoformat() if isinstance(item["monthly_payment_date"], datetime.date) else str(item["monthly_payment_date"])
+        }
+        for item in order_items
+    ]
+    return app.response_class(
+        response=json.dumps(formatted_order_items, separators=(', ', ': ')),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route("/order_items", methods=["POST"])
+@token_required
+@role_required(["staff", "admin"])
+def add_order_item():
+    data = request.get_json()
+    order_id = data.get("order_id")
+    service_id = data.get("service_id")
+    order_quantity = data.get("order_quantity")
+    monthly_payment_amount = data.get("monthly_payment_amount")
+    monthly_payment_date = data.get("monthly_payment_date")
+
+    if not order_id or not service_id or not order_quantity:
+        return jsonify({"error": "Required fields missing"}), 400
+
+    query = """
+    INSERT INTO Order_Items (order_id, service_id, order_quantity, monthly_payment_amount, monthly_payment_date) 
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    params = (order_id, service_id, order_quantity, monthly_payment_amount, monthly_payment_date)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Order item added successfully"}), 201
+    else:
+        return jsonify({"error": "Failed to add order item"}), 500
+
+@app.route("/order_items/<int:order_item_id>", methods=["PUT"])
+@token_required
+@role_required(["staff", "admin"])
+def update_order_item(order_item_id):
+    data = request.get_json()
+    order_id = data.get("order_id")
+    service_id = data.get("service_id")
+    order_quantity = data.get("order_quantity")
+    monthly_payment_amount = data.get("monthly_payment_amount")
+    monthly_payment_date = data.get("monthly_payment_date")
+
+    query = """
+    UPDATE Order_Items SET order_id=%s, service_id=%s, order_quantity=%s, 
+    monthly_payment_amount=%s, monthly_payment_date=%s WHERE order_item_id=%s
+    """
+    params = (order_id, service_id, order_quantity, monthly_payment_amount, monthly_payment_date, order_item_id)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Order item updated successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to update order item"}), 500
+
+@app.route("/order_items/<int:order_item_id>", methods=["DELETE"])
+@token_required
+@role_required(["staff", "admin"])
+def delete_order_item(order_item_id):
+    query = "DELETE FROM Order_Items WHERE order_item_id=%s"
+    params = (order_item_id,)
+    
+    result = execute_query(query, params)
+    
+    if result:
+        return jsonify({"message": "Order item deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete order item"}), 500
