@@ -33,14 +33,34 @@ Activate the virtual environment:
     source .venv/bin/activate
     ```
 
-### 2. Install Dependencies
+**Confirm Activation:**\
+After activation, check your command prompt or terminal prompt. It should change to indicate that the virtual environment is active (e.g., it may show `(.venv)` at the beginning of the line).
+
+**Example of Active Virtual Environment:**
+- On Windows:
+    ```
+    (.venv) C:\path\to\your\project>
+    ```
+
+- On macOS/Linux:
+    ```
+    (.venv) user@hostname:~/path/to/your/project$
+    ```
+
+### 2. Clone the Repository
+Clone the repository to your local machine using the following command:
+```bash
+git clone https://github.com/astalkb/Customer-Services-Management.git
+```
+
+### 3. Install Dependencies
 
 Install the required dependencies by running the following command:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configuration
+### 4. Configuration
 
 1. **Upload the Database Schema:**
    Upload the `elective.sql` file from the `database` folder to your MySQL server or local machine.
@@ -56,9 +76,8 @@ pip install -r requirements.txt
    }
    ```
 
-### 4. Run the Application
-
-Start the Flask application with the following command:
+### 5. Run the Application
+Start the Flask application with the following command from the root directory of the project (where `app.py` is located):
 ```bash
 flask --app app.py run
 ```
