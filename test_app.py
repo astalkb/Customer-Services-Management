@@ -52,7 +52,7 @@ def setup_mock_db(mock_mysql, query_result=None, rowcount=0, side_effect=None):
     if side_effect:
         mock_cursor.execute.side_effect = side_effect
     else:
-        mock_cursor.execute.side_effect = lambda query, params=None: print(f"Executing Query: {query}, Params: {params}")
+        mock_cursor.execute.side_effect = lambda query, params=None: None
 
 # Load users from the JSON file for authentication
 users = load_users()
@@ -75,10 +75,7 @@ def test_register_success(client):
 
     assert response.status_code == 201
     assert "User registered successfully" in response.get_json()["message"]
-
-    # Clean up: remove the test user after the test
-    if "testuser" in temp_users:
-        del temp_users["testuser"]
+    print("test_register_success: Passed")
 
 def test_login_success(client):
     client, mock_mysql = client
@@ -92,6 +89,7 @@ def test_login_success(client):
 
     assert response.status_code == 200
     assert "token" in response.get_json()
+    print("test_login_success: Passed")
 
 
 
@@ -108,6 +106,7 @@ def test_get_addresses_success(client):
     response = client.get("/addresses")
     assert response.status_code == 200
     assert len(response.get_json()) == len(addresses)
+    print("test_get_addresses_success: Passed")
 
 def test_add_address_success(client):
     client, mock_mysql = client
@@ -121,6 +120,7 @@ def test_add_address_success(client):
 
     assert response.status_code == 201
     assert "Address added successfully" in response.get_json()["message"]
+    print("test_add_address_success: Passed")
 
 def test_update_address_success(client):
     client, mock_mysql = client
@@ -134,6 +134,7 @@ def test_update_address_success(client):
 
     assert response.status_code == 200
     assert "Address updated successfully" in response.get_json()["message"]
+    print("test_update_address_success: Passed")
 
 def test_delete_address_success(client):
     client, mock_mysql = client
@@ -142,6 +143,7 @@ def test_delete_address_success(client):
     response = client.delete("/addresses/1", headers={"Authorization": f"Bearer {generate_token('testuser', 'admin')}"})
     assert response.status_code == 200
     assert "Address deleted successfully" in response.get_json()["message"]
+    print("test_delete_address_success: Passed")
 
 
 # Customers
@@ -156,6 +158,7 @@ def test_get_customers_success(client):
     response = client.get("/customers")
     assert response.status_code == 200
     assert len(response.get_json()) == len(customers)
+    print("test_get_customers_success: Passed")
 
 def test_add_customer_success(client):
     client, mock_mysql = client
@@ -169,6 +172,7 @@ def test_add_customer_success(client):
 
     assert response.status_code == 201
     assert "Customer added successfully" in response.get_json()["message"]
+    print("test_add_customer_success: Passed")
 
 def test_update_customer_success(client):
     client, mock_mysql = client
@@ -182,6 +186,7 @@ def test_update_customer_success(client):
 
     assert response.status_code == 200
     assert "Customer updated successfully" in response.get_json()["message"]
+    print("test_update_customer_success: Passed")
 
 def test_delete_customer_success(client):
     client, mock_mysql = client
@@ -190,6 +195,7 @@ def test_delete_customer_success(client):
     response = client.delete("/customers/1", headers={"Authorization": f"Bearer {generate_token('testuser', 'admin')}"})
     assert response.status_code == 200
     assert "Customer deleted successfully" in response.get_json()["message"]
+    print("test_delete_customer_success: Passed")
 
 
 # Orders
@@ -204,6 +210,7 @@ def test_get_orders_success(client):
     response = client.get("/orders")
     assert response.status_code == 200
     assert len(response.get_json()) == len(orders)
+    print("test_get_orders_success: Passed")
 
 def test_add_order_success(client):
     client, mock_mysql = client
@@ -217,6 +224,7 @@ def test_add_order_success(client):
 
     assert response.status_code == 201
     assert "Order added successfully" in response.get_json()["message"]
+    print("test_add_order_success: Passed")
 
 def test_update_order_success(client):
     client, mock_mysql = client
@@ -230,6 +238,7 @@ def test_update_order_success(client):
 
     assert response.status_code == 200
     assert "Order updated successfully" in response.get_json()["message"]
+    print("test_update_order_success: Passed")
 
 def test_delete_order_success(client):
     client, mock_mysql = client
@@ -238,6 +247,7 @@ def test_delete_order_success(client):
     response = client.delete("/orders/1", headers={"Authorization": f"Bearer {generate_token('testuser', 'admin')}"})
     assert response.status_code == 200
     assert "Order deleted successfully" in response.get_json()["message"]
+    print("test_delete_order_success: Passed")
 
 
 # Order Items
@@ -252,6 +262,7 @@ def test_get_order_items_success(client):
     response = client.get("/order_items")
     assert response.status_code == 200
     assert len(response.get_json()) == len(order_items)
+    print("test_get_order_items_success: Passed")
 
 def test_add_order_item_success(client):
     client, mock_mysql = client
@@ -265,6 +276,7 @@ def test_add_order_item_success(client):
 
     assert response.status_code == 201
     assert "Order item added successfully" in response.get_json()["message"]
+    print("test_add_order_item_success: Passed")
 
 def test_update_order_item_success(client):
     client, mock_mysql = client
@@ -278,6 +290,7 @@ def test_update_order_item_success(client):
 
     assert response.status_code == 200
     assert "Order item updated successfully" in response.get_json()["message"]
+    print("test_update_order_item_success: Passed")
 
 def test_delete_order_item_success(client):
     client, mock_mysql = client
@@ -286,6 +299,7 @@ def test_delete_order_item_success(client):
     response = client.delete("/order_items/1", headers={"Authorization": f"Bearer {generate_token('testuser', 'admin')}"})
     assert response.status_code == 200
     assert "Order item deleted successfully" in response.get_json()["message"]
+    print("test_delete_order_item_success: Passed")
 
 
 # Payments
@@ -300,6 +314,7 @@ def test_get_payments_success(client):
     response = client.get("/payments")
     assert response.status_code == 200
     assert len(response.get_json()) == len(payments)
+    print("test_get_payments_success: Passed")
 
 def test_add_payment_success(client):
     client, mock_mysql = client
@@ -313,6 +328,7 @@ def test_add_payment_success(client):
 
     assert response.status_code == 201
     assert "Payment added successfully" in response.get_json()["message"]
+    print("test_add_payment_success: Passed")
 
 def test_update_payment_success(client):
     client, mock_mysql = client
@@ -326,6 +342,7 @@ def test_update_payment_success(client):
 
     assert response.status_code == 200
     assert "Payment updated successfully" in response.get_json()["message"]
+    print("test_update_payment_success: Passed")
 
 def test_delete_payment_success(client):
     client, mock_mysql = client
@@ -334,6 +351,7 @@ def test_delete_payment_success(client):
     response = client.delete("/payments/1", headers={"Authorization": f"Bearer {generate_token('testuser', 'admin')}"})
     assert response.status_code == 200
     assert "Payment deleted successfully" in response.get_json()["message"]
+    print("test_delete_payment_success: Passed")
 
 
 # Services
@@ -348,6 +366,7 @@ def test_get_services_success(client):
     response = client.get("/services")
     assert response.status_code == 200
     assert len(response.get_json()) == len(services)
+    print("test_get_services_success: Passed")
 
 def test_add_service_success(client):
     client, mock_mysql = client
@@ -361,6 +380,7 @@ def test_add_service_success(client):
 
     assert response.status_code == 201
     assert "Service added successfully" in response.get_json()["message"]
+    print("test_add_service_success: Passed")
 
 def test_update_service_success(client):
     client, mock_mysql = client
@@ -374,6 +394,7 @@ def test_update_service_success(client):
 
     assert response.status_code == 200
     assert "Service updated successfully" in response.get_json()["message"]
+    print("test_update_service_success: Passed")
 
 def test_delete_service_success(client):
     client, mock_mysql = client
@@ -382,3 +403,4 @@ def test_delete_service_success(client):
     response = client.delete("/services/1", headers={"Authorization": f"Bearer {generate_token('testuser', 'admin')}"})
     assert response.status_code == 200
     assert "Service deleted successfully" in response.get_json()["message"]
+    print("test_delete_service_success: Passed")
