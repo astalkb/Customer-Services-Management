@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_httpauth import HTTPBasicAuth
+from flask_jwt_extended import JWTManager, create_access_token
 import mysql.connector
 import json
 import jwt
@@ -12,6 +13,10 @@ from decimal import Decimal
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "keinth123"
+app.config['TESTING'] = False
+
+# Initialize JWTManager
+jwt_manager = JWTManager(app)
 
 auth = HTTPBasicAuth()
 USER_DATA_FILE = "users.json"
@@ -56,14 +61,16 @@ def execute_query(query, params=None, fetch=False):
         connection.close()
         return result
     except mysql.connector.Error as e:
-        print(f"Database error: {e}")
+        logging.error(f"Database error: {e}")
         if connection:
             connection.close()
         return None
     
 
 def load_users():
-    """Load users from JSON file"""
+    """Load users from JSON file or return an empty dict if in testing mode"""
+    if app.config['TESTING']:
+        return {}
     try:
         with open(USER_DATA_FILE, "r") as file:
             return json.load(file)
@@ -71,7 +78,9 @@ def load_users():
         return {}
 
 def save_users(users):
-    """Save users to JSON file"""
+    """Save users to JSON file only if not in testing mode"""
+    if app.config['TESTING']:
+        return
     with open(USER_DATA_FILE, "w") as file:
         json.dump(users, file)
 
@@ -83,6 +92,10 @@ def verify_password(username, password):
     """Verify user password"""
     if username in users and check_password_hash(users[username]['password'], password):
         return username
+
+def generate_token(identity, role):
+    return create_access_token(identity=identity, additional_claims={"role": role, "username": identity})
+
 
 def token_required(f):
     """Decorator to require JWT token for route access"""
@@ -158,19 +171,8 @@ def login():
     if username not in users or not check_password_hash(users[username]['password'], password):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    # Generate or retrieve existing token
-    token_payload = {
-        "username": username,
-        "role": users[username]['role'],
-        "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
-    }
-    token = jwt.encode(token_payload, app.config["SECRET_KEY"], algorithm="HS256")
-
-    # Log the token and its payload
-    logging.debug(f"Generated token: {token}")
-    logging.debug(f"Token payload: {token_payload}")
-
-    return jsonify({"token": token})
+    token = generate_token(username, users[username]['role'])
+    return jsonify({"token": token}), 200
 
 
 # CRUD operations for Addresses
@@ -220,9 +222,9 @@ def add_address():
     VALUES (%s, %s, %s, %s, %s, %s)
     """
     params = (number_building, street, city, zip_postcode, state_province_county, country)
-    
+
     result = execute_query(query, params)
-    
+
     if result:
         return jsonify({"message": "Address added successfully"}), 201
     else:
