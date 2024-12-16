@@ -168,6 +168,9 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+
     if username not in users or not check_password_hash(users[username]['password'], password):
         return jsonify({"error": "Invalid credentials"}), 401
 
