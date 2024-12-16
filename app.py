@@ -140,6 +140,8 @@ def role_required(required_roles):
 # Register Route
 @app.route("/register", methods=["POST"])
 def register():
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 415
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
@@ -164,6 +166,9 @@ logging.basicConfig(level=logging.DEBUG)
 # Login Route
 @app.route("/login", methods=["POST"])
 def login():
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 415
+
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
